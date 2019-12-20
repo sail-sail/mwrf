@@ -1,0 +1,42 @@
+{
+    "typescript.tsdk": "${workspaceRoot}\\node_modules\\typescript\\lib",
+    "vsicons.presets.angular": true,
+    "editor.trimAutoWhitespace": false,
+    "files.trimTrailingWhitespace": false,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+		"**/tsconfig.json": true,
+        "**/.editorconfig": true,
+        "**/protractor.conf.js": true,
+        "**/tslint.json": true,
+        "**/karma.conf.js": true,
+        "**/.gitignore": true,
+		"**/.gitkeep": true,
+		"**/LICENSE": true
+    },
+    "search.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+		"**/tsconfig.json": true,
+        "**/.editorconfig": true,
+        "**/protractor.conf.js": true,
+        "**/tslint.json": true,
+        "**/karma.conf.js": true,
+        "**/.gitignore": true,
+		"**/.gitkeep": true,
+		"**/LICENSE": true,
+        "index.js": true,
+        ".vscode": true,
+		"package.json": true,
+        "node_modules": true
+    },
+    "debug.node.autoAttach": "on",
+    "debug.inlineValues": true
+}

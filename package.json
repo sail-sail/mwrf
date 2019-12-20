@@ -1,0 +1,40 @@
+{
+  "name": "mwrf",
+  "version": "1.0.0",
+  "description": "URF-35H-MEM",
+  "main": "./src/mwrf32.js",
+  "scripts": {
+    "test": "./node_modules/.bin/jest"
+  },
+  "keywords": [
+    "URF-35H-MEM",
+    "明华"
+  ],
+  "author": "Sail",
+  "contributors": [
+    {
+      "name": "Sail",
+      "email": "151263555@qq.com",
+      "url": "https://github.com/sail-sail"
+    }
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "ffi-napi": "2.4.5",
+    "ref-array-napi": "1.2.0",
+    "ref-napi": "1.4.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "test",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      ".+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage"
+  }
+}
