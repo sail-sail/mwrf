@@ -161,7 +161,7 @@ exports.rf_anticollCb = function(opt, callback) {
         (buf[0] === 0x00 && buf[1] === 0x10) 
       ) {
         var snc = mwrf.rf_anticoll(icdev).toString("hex");
-        if(snc === "00000000") continue;
+        if(snc.startsWith("0") && snc.endsWith("000000")) continue;
         if(prevSnc === snc) continue;
         prevSnc = snc;
         clearTimeout(timeout);
