@@ -1,6 +1,6 @@
 {
   "name": "mwrf",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "URF-35H-MEM",
   "main": "./src/mwrf32.js",
   "scripts": {
