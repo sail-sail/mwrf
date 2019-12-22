@@ -121,7 +121,7 @@ exports.rf_request = function(icdev, _Msec) {
  * @returns {Buffer} 返回的卡序列号地址
  */
 exports.rf_anticoll = function(icdev) {
-  var buf = Buffer.allocUnsafe(4);
+  var buf = Buffer.allocUnsafe(4).fill(0);
   var buf1 = Buffer.allocUnsafe(1);
   buf1[0] = 0x00;
   mwhrf_bj.rf_anticoll(icdev, buf1, buf);
