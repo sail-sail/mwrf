@@ -13,8 +13,9 @@ var mwhrf_bj = ffi.Library(`${__dirname}/../lib/mwhrf_bj`, {
   "rf_beep": [ "int", [ "int", "uint32" ] ],
   "rf_reset": [ "int", [ "int", "uint32" ] ],
   "rf_halt": [ "int", [ "int" ] ],
-  "rf_request": [ "int", [ "int", "uint32", "string" ] ],
+  "rf_request": [ "int", [ "uint", "uint32", "string" ] ],
   "rf_select": [ "int", [ "int", "string", "string" ] ],
+  "rf_card": [ "int", [ "int", "string", "string" ] ]
 });
 
 /**
@@ -56,9 +57,10 @@ exports.Close_USB = function(icdev) {
  * @param  {} icdev 通讯设备标识符
  * @param  {} _Msec 蜂鸣时间，单位是10毫秒
  */
-exports.rf_beep = function(icdev, _Msec) {
+var rf_beep = function(icdev, _Msec) {
   mwhrf_bj.rf_beep(icdev, _Msec);
 };
+exports.rf_beep = rf_beep
 
 /**
  * 读取读写器日期、星期、时间
@@ -87,9 +89,10 @@ exports.rf_gettimehex = function(icdev) {
  * @param  {} icdev 通讯设备标识符
  * @param  {} _Msec 复位时间，0～500毫秒有效
  */
-exports.rf_reset = function(icdev, _Msec) {
+var rf_reset = function(icdev, _Msec) {
   mwhrf_bj.rf_reset(icdev, _Msec);
 };
+exports.rf_reset = rf_reset;
 
 /**
  * 中止对该卡操作
@@ -109,8 +112,10 @@ exports.rf_halt = function(icdev) {
  * 2——表示指定卡模式，只对序列号等于snr的卡操作（高级函数才有）
  * @returns {Buffer} 卡类型值，0x0004为M1卡，0x0010为ML卡
  */
-exports.rf_request = function(icdev, _Msec) {
+exports.rf_request = function(icdev) {
   var buf = Buffer.allocUnsafe(2);
+  var _MsecBuf = Buffer.allocUnsafe(1);
+  _MsecBuf[0] = 0x01;
   mwhrf_bj.rf_request(icdev, _Msec, buf);
   return buf;
 };
@@ -140,6 +145,42 @@ exports.rf_select = function(icdev, _Snr) {
   return buf;
 };
 
+var rf_card = function(icdev) {
+  var snr = Buffer.allocUnsafe(4).fill(0);
+  var mode = Buffer.allocUnsafe(1);
+  mode[0] = 0x00;
+  mwhrf_bj.rf_card(icdev, mode, snr);
+  return snr;
+}
+exports.rf_card = rf_card;;
+
+exports.rf_cardCb = function(opt, callback) {
+  if(typeof(opt) === "function") {
+    callback = opt;
+    opt = undefined;
+  }
+  var stop = false;
+  var icdev = opt && opt.icdev;
+  var tmpFn = async function () {
+    while(true) {
+      if(stop) break;
+      // rf_reset(icdev, 0);
+      await new Promise((resolve) => setTimeout(resolve, opt && opt.intv || 500));
+      var snr = rf_card(icdev);
+      if(snr.toString("hex") === "00000000") continue;
+      if(!opt || opt.notBeep !== true) {
+        rf_beep(icdev, 10);
+      }
+      callback(snr);
+    }
+  };
+  tmpFn();
+  var stopFn = function() {
+    stop = true;
+  };
+  return stopFn;
+}
+
 exports.rf_anticollCb = function(opt, callback) {
   if(typeof(opt) === "function") {
     callback = opt;
@@ -155,7 +196,7 @@ exports.rf_anticollCb = function(opt, callback) {
       if(stop) break;
       await new Promise((resolve) => setTimeout(resolve, opt && opt.intv || 1000));
       mwrf.rf_reset(icdev, 0);
-      var buf = mwrf.rf_request(icdev, 1);
+      var buf = mwrf.rf_request(icdev);
       if(
         (buf[0] === 0x04 && buf[1] === 0x00) ||
         (buf[0] === 0x00 && buf[1] === 0x10) 
