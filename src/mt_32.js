@@ -109,7 +109,7 @@ exports.rf_cardCb = function(opt, callback) {
       await new Promise((resolve) => setTimeout(resolve, opt && opt.intv || 500));
       var snr = rf_card(icdev);
       if(snr.equals(buf0)) continue;
-      if(prevSnr.equals(snr)) continue;
+      if(prevSnr && prevSnr.equals(snr)) continue;
         prevSnr = snr;
         clearTimeout(timeout);
         timeout = setTimeout(function() {

@@ -1,13 +1,13 @@
 {
   "name": "mwrf",
-  "version": "1.0.6",
-  "description": "URF-35H-MEM,MT32",
+  "version": "1.0.7",
+  "description": "URF-35H-MEM,MT3F-00-R332-ANT",
   "main": "./src/mwrf32.js",
   "scripts": {
     "test": "./node_modules/.bin/jest"
   },
   "keywords": [
-    "URF-35H-MEM",
+    "URF-35H-MEM,MT3F-00-R332-ANT",
     "明华"
   ],
   "author": "Sail",
