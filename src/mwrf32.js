@@ -154,6 +154,7 @@ var rf_card = function(icdev) {
 }
 exports.rf_card = rf_card;
 
+var buf0 = Buffer.alloc(4);
 exports.rf_cardCb = function(opt, callback) {
   if(typeof(opt) === "function") {
     callback = opt;
@@ -167,7 +168,7 @@ exports.rf_cardCb = function(opt, callback) {
       // rf_reset(icdev, 0);
       await new Promise((resolve) => setTimeout(resolve, opt && opt.intv || 500));
       var snr = rf_card(icdev);
-      if(snr.toString("hex") === "00000000") continue;
+      if(snr.equals(buf0)) continue;
       if(!opt || opt.notBeep !== true) {
         rf_beep(icdev, 10);
       }

@@ -93,6 +93,7 @@ var dev_beep = function(icdev, nMsec, nMsec_end, nTime) {
 };
 exports.dev_beep = dev_beep;
 
+var buf0 = Buffer.alloc(4);
 exports.rf_cardCb = function(opt, callback) {
   if(typeof(opt) === "function") {
     callback = opt;
@@ -107,10 +108,9 @@ exports.rf_cardCb = function(opt, callback) {
       if(stop) break;
       await new Promise((resolve) => setTimeout(resolve, opt && opt.intv || 500));
       var snr = rf_card(icdev);
-      var snrHex = snr.toString("hex");
-      if(snrHex === "00000000") continue;
-      if(prevSnr === snrHex) continue;
-        prevSnr = snrHex;
+      if(snr.equals(buf0)) continue;
+      if(prevSnr.equals(snr)) continue;
+        prevSnr = snr;
         clearTimeout(timeout);
         timeout = setTimeout(function() {
           prevSnr = "";
