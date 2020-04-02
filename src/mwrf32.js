@@ -172,7 +172,11 @@ exports.rf_cardCb = function(opt, callback) {
       if(!opt || opt.notBeep !== true) {
         rf_beep(icdev, 10);
       }
-      callback(snr);
+      try {
+        await callback(snr);
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
   tmpFn();
