@@ -32,7 +32,7 @@ ulonglong   unsigned long long
 size_t     platform-dependent, usually pointer size
 */
 
-var mt_32 = ffi.Library(`${__dirname}/../lib/mt_32`, {
+var mt_32 = ffi.Library(`${ __dirname.replace('app.asar', 'app.asar.unpacked') }/../lib/mt_32`, {
   "open_device": [ "int", [ "uchar", "ulong" ] ],
   "close_device": [ "int", [ "int" ] ],
   "get_version": [ "int16", [ "int", "string", "string" ] ],

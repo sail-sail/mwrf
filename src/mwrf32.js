@@ -1,8 +1,8 @@
 var ffi = require('ffi-napi');
-var ref = require('ref-napi');
-var refArray = require('ref-array-napi');
+// var ref = require('ref-napi');
+// var refArray = require('ref-array-napi');
 
-var mwhrf_bj = ffi.Library(`${__dirname}/../lib/mwhrf_bj`, {
+var mwhrf_bj = ffi.Library(`${ __dirname.replace('app.asar', 'app.asar.unpacked') }/../lib/mwhrf_bj`, {
   "lib_ver": [ "int", [ "string" ] ],
   "rf_get_status": [ "int", [ "int", "string" ] ],
   "Open_USB": [ "int", [ ] ],
