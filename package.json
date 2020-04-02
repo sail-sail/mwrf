@@ -1,7 +1,7 @@
 {
   "name": "mwrf",
-  "version": "1.0.3",
-  "description": "URF-35H-MEM",
+  "version": "1.0.4",
+  "description": "URF-35H-MEM,MT32",
   "main": "./src/mwrf32.js",
   "scripts": {
     "test": "./node_modules/.bin/jest"

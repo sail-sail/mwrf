@@ -33,35 +33,97 @@ size_t     platform-dependent, usually pointer size
 */
 
 var mt_32 = ffi.Library(`${__dirname}/../lib/mt_32`, {
-  "device_open": [ "int", [ "string", "int16", "ulong" ] ],
-  "device_version": [ "int16", [ "int", "byte", "string", "string" ] ],
-  "rf_card": [ "int", [ "int", "ushort", "string", "string" ]]
+  "open_device": [ "int", [ "uchar", "ulong" ] ],
+  "close_device": [ "int", [ "int" ] ],
+  "get_version": [ "int16", [ "int", "string", "string" ] ],
+  "rf_card": [ "int", [ "int", "uchar", "string" ]],
+  "dev_beep": [ "int", [ "int", "uchar", "uchar", "uchar" ] ],
 });
 
-var rf_card = function(icdev, delaytime) {
-  var cardType = Buffer.allocUnsafe(1);
-  var cardID =  Buffer.allocUnsafe(4);
-  if(!delaytime) {
-    delaytime = Buffer.allocUnsafe(2);
-    delaytime[0] = 0x00;
-    delaytime[1] = 0x00;
-  }
-  mt_32.rf_card(icdev, delaytime, cardType, cardID);
-  return { cardType, cardID };
+var rf_card = function(icdev, nMode) {
+  var sSnr =  Buffer.alloc(4);
+  var nMode = Buffer.alloc(1);
+  mt_32.rf_card(icdev, nMode, sSnr);
+  return sSnr;
 };
 exports.rf_card = rf_card;
 
-var device_open = function(name, port, baud) {
-  return mt_32.device_open(name, port, baud);
+/**
+ * 打开读写器
+ * icdev = open_device (0,9600)
+ * @param  {} port 串口号,0 对应 COM1,1 对应 COM2……，取值范围 0~31
+ * @param  {} baud 通讯波特率，9600bps（缺省设置），19200bps，38400bps，57600bps，115200bps
+ */
+var open_device = function(port, baud) {
+  port = port == null ? 2 : port;
+  baud = baud || 115200;
+  var icdev = mt_32.open_device(port, baud);
+  return icdev;
 };
-exports.device_open = device_open;
+exports.open_device = open_device;
 
-var device_version = function(icdev) {
-  var moduleStr = Buffer.allocUnsafe(1);
-  moduleStr[0] = 0x01;
+//关闭读写器
+var close_device = function(icdev) {
+  return mt_32.close_device(icdev);
+};
+exports.close_device = close_device;
+
+//获取读写器版本信息
+var get_version = function(icdev) {
   var verlen = Buffer.allocUnsafe(1);
   var verdata = Buffer.allocUnsafe(100);
-  mt_32.device_version(icdev, moduleStr, verlen, verdata);
-  return { verlen, verdata };
+  mt_32.get_version(icdev, verlen, verdata);
+  return verdata.slice(0, verlen[0]).toString();
 };
-exports.device_version = device_version;
+exports.get_version = get_version;
+
+/**
+ * 控制读写器蜂鸣器的单声鸣叫延迟时间和鸣叫次数
+ * st=dev_beep( icdev,2,5,2);
+ * @param  {number} icdev 通讯设备标识符
+ * @param  {} nMsec 1 字节，一次鸣叫持续时间（单位时间 100ms）
+ * @param  {} nMsec_end 1字节，一次鸣叫停止时间(多次蜂鸣时的间隔时间，单位时间100ms)
+ * @param  {} nTime 1 字节，蜂鸣器鸣叫次数
+ */
+var dev_beep = function(icdev, nMsec, nMsec_end, nTime) {
+  nMsec = nMsec || 1;
+  nMsec_end = nMsec_end || 1;
+  nTime = nTime || 1;
+  mt_32.dev_beep(icdev, nMsec, nMsec_end, nTime);
+};
+exports.dev_beep = dev_beep;
+
+exports.rf_cardCb = function(opt, callback) {
+  if(typeof(opt) === "function") {
+    callback = opt;
+    opt = undefined;
+  }
+  var stop = false;
+  var icdev = opt && opt.icdev;
+  var prevSnr = "";
+  var timeout = undefined;
+  var tmpFn = async function () {
+    while(true) {
+      if(stop) break;
+      await new Promise((resolve) => setTimeout(resolve, opt && opt.intv || 500));
+      var snr = rf_card(icdev);
+      var snrHex = snr.toString("hex");
+      if(snrHex === "00000000") continue;
+      if(prevSnr === snrHex) continue;
+        prevSnr = snrHex;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+          prevSnr = "";
+        }, opt && opt.intv2 || 3000);
+      if(!opt || opt.notBeep !== true) {
+        dev_beep(icdev);
+      }
+      callback(snr);
+    }
+  };
+  tmpFn();
+  var stopFn = function() {
+    stop = true;
+  };
+  return stopFn;
+}

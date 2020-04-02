@@ -152,7 +152,7 @@ var rf_card = function(icdev) {
   mwhrf_bj.rf_card(icdev, mode, snr);
   return snr;
 }
-exports.rf_card = rf_card;;
+exports.rf_card = rf_card;
 
 exports.rf_cardCb = function(opt, callback) {
   if(typeof(opt) === "function") {

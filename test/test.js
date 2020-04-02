@@ -14,6 +14,12 @@ console.log(str);
 // }, 10000);
 
 var icdev = mwrf.Open_USB();
+console.log(icdev);
+if(icdev === -0x20) {
+  console.error("打开通信口失败");
+  return;
+}
+
 
 var stopFn = mwrf.rf_cardCb({ icdev }, function(snr) {
   console.log(snr.toString("hex"));
