@@ -1,8 +1,8 @@
 {
   "name": "mwrf",
-  "version": "1.0.7",
-  "description": "URF-35H-MEM,MT3F-00-R332-ANT",
-  "main": "./src/mwrf32.js",
+  "version": "1.0.8",
+  "description": "URF-35H-MEM,MT3F-00-R332-ANT,RF-EYE-U010",
+  "main": "./src/mwhrf_bj.js",
   "scripts": {
     "test": "./node_modules/.bin/jest"
   },
