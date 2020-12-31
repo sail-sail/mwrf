@@ -7,8 +7,10 @@
     "test": "./node_modules/.bin/jest"
   },
   "keywords": [
-    "URF-35H-MEM,MT3F-00-R332-ANT",
-    "明华"
+    "URF-35H-MEM",
+    "MT3F-00-R332-ANT",
+    "RF-EYE-U010",
+    "明华读卡器"
   ],
   "author": "Sail",
   "contributors": [
