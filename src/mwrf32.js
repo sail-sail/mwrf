@@ -83,7 +83,7 @@ exports.rf_exit = function(icdev) {
 exports.rf_card = function(icdev, mode) {
   const snrBuf = Buffer.alloc(4);
   const st = mwrf32.rf_card(icdev, mode, snrBuf);
-  if(st !== 0) throw `rf_card: st=${st}`;
+  if(st !== 0) throw `卡不存在!`;
   return snrBuf;
 };
 
