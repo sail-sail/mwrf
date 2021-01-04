@@ -8,6 +8,7 @@ const mwrf32 = ffi.Library(`${ __dirname.replace('app.asar', 'app.asar.unpacked'
   "rf_card": [ "char", [ "int", "int", "string" ] ],
   "rf_authentication": [ "char", [ "int", "int", "int" ] ],
   "rf_read": [ "char", [ "int", "int", "string" ] ],
+  "rf_beep": [ "int", [ "int", "uint32" ] ],
 });
 
 /**
@@ -129,4 +130,13 @@ exports.rf_read = function(icdev, adr) {
   const st = mwrf32.rf_read(icdev, adr, dataBuf);
   if(st !== 0) throw `读取卡号失败!`;
   return dataBuf;
+};
+
+/**
+ * 蜂鸣
+ * @param  {} icdev 通讯设备标识符
+ * @param  {} _Msec 蜂鸣时间，单位是10毫秒
+ */
+exports.rf_beep = function(icdev, _Msec) {
+  mwrf32.rf_beep(icdev, _Msec);
 };

@@ -18,4 +18,6 @@ mwrf.rf_authentication(icdev, 0);
 const data = mwrf.rf_read(icdev, 1);
 console.log(data.toString("hex"));
 
+mwrf.rf_beep(icdev, 1);
+
 mwrf.rf_exit(icdev);
